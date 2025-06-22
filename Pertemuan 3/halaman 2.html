@@ -1,0 +1,499 @@
+<!-- Kalkulator Sederhana -->
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kalkulator Super</title>
+    <style>
+        :root {
+            --primary: #3498db;
+            --primary-dark: #2980b9;
+            --danger: #e74c3c;
+            --danger-dark: #c0392b;
+            --success: #2ecc71;
+            --success-dark: #27ae60;
+            --dark: #2c3e50;
+            --light: #ecf0f1;
+            --bg-light: #f5f7fa;
+            --bg-dark: #1a1a2e;
+            --text-light: #333;
+            --text-dark: #f5f7fa;
+            --border-radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: var(--transition);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-light) 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            color: var(--text-light);
+        }
+
+        body.dark-mode {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #16213e 100%);
+            color: var(--text-dark);
+        }
+
+        .calculator-container {
+            width: 100%;
+            max-width: 450px;
+            padding: 20px;
+        }
+
+        .calculator {
+            background-color: rgba(255, 255, 255, 0.95);
+            padding: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            position: relative;
+        }
+
+        .dark-mode .calculator {
+            background-color: rgba(26, 26, 46, 0.9);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .calculator-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        h1 {
+            color: inherit;
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .mode-toggle {
+            background: var(--dark);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .dark-mode .mode-toggle {
+            background: var(--light);
+            color: var(--dark);
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        input[type="number"] {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #dfe6e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            background-color: #f8f9fa;
+            color: inherit;
+        }
+
+        .dark-mode input[type="number"] {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+            color: var(--text-dark);
+        }
+
+        input[type="number"]:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.2);
+            background-color: white;
+        }
+
+        .dark-mode input[type="number"]:focus {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .button-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin: 25px 0;
+        }
+
+        button {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            border: none;
+            padding: 16px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: 600;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        .operator {
+            background: linear-gradient(135deg, var(--danger) 0%, var(--danger-dark) 100%);
+        }
+
+        .advanced {
+            background: linear-gradient(135deg, var(--success) 0%, var(--success-dark) 100%);
+        }
+
+        .secondary {
+            background: linear-gradient(135deg, #95a5a6 0%, #7f8c8d 100%);
+        }
+
+        #hasil {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #dfe6e9;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background-color: #f8f9fa;
+            text-align: right;
+            margin-top: 5px;
+            color: inherit;
+        }
+
+        .dark-mode #hasil {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .history {
+            margin-top: 20px;
+            max-height: 150px;
+            overflow-y: auto;
+            padding: 10px;
+            border-radius: var(--border-radius);
+            background-color: rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .history {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .history-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            font-size: 0.9rem;
+        }
+
+        .dark-mode .history-item {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .history-title {
+            font-weight: 600;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .clear-history {
+            color: var(--danger);
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+
+        /* Animasi */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .calculator {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            button {
+                padding: 14px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="calculator">
+            <form id="calcForm" onsubmit="handleCalculate(event)">
+                <div class="calculator-header">
+                    <h1>Kalkulator Super</h1>
+                    <button type="button" class="mode-toggle" id="modeToggle">
+                        <span>🌙</span> Dark Mode
+                    </button>
+                </div>
+                
+                <div class="input-group">
+                    <label for="bil1">Bilangan 1:</label>
+                    <input type="number" id="bil1" placeholder="Masukkan angka" required>
+                </div>
+                
+                <div class="input-group">
+                    <label for="bil2">Bilangan 2:</label>
+                    <input type="number" id="bil2" placeholder="Masukkan angka" required>
+                </div>
+                
+                <div class="button-grid">
+                    <button type="button" onclick="calculate('+')">+</button>
+                    <button type="button" onclick="calculate('-')">-</button>
+                    <button type="button" onclick="calculate('*')">×</button>
+                    <button type="button" onclick="calculate('/')" class="operator">÷</button>
+                    <button type="button" onclick="calculate('pow')" class="advanced">x^y</button>
+                    <button type="button" onclick="calculate('sqrt')" class="advanced">√x</button>
+                    <button type="button" onclick="calculate('%')" class="advanced">%</button>
+                    <button type="button" onclick="clearAll()" class="secondary">AC</button>
+                </div>
+                
+                <div class="input-group">
+                    <label for="hasil">Hasil:</label>
+                    <input type="number" id="hasil" readonly>
+                </div>
+            </form>
+            
+            <div class="history" id="historyContainer">
+                <div class="history-title">
+                    <span>Riwayat Perhitungan</span>
+                    <span class="clear-history" onclick="clearHistory()">Hapus</span>
+                </div>
+                <div id="historyList"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variabel untuk menyimpan riwayat
+        let calculationHistory = [];
+        let lastOperator = '+'; // Menyimpan operator terakhir yang digunakan
+        
+        // Fungsi utama kalkulator
+        function calculate(operator) {
+            const bil1 = parseFloat(document.getElementById('bil1').value);
+            const bil2 = parseFloat(document.getElementById('bil2').value);
+            const hasilInput = document.getElementById('hasil');
+            
+            // Simpan operator terakhir
+            lastOperator = operator;
+            
+            let result;
+            let operationText;
+            
+            switch(operator) {
+                case '+':
+                    if (isNaN(bil1) || isNaN(bil2)) {
+                        showError("Masukkan kedua bilangan!");
+                        return;
+                    }
+                    result = bil1 + bil2;
+                    operationText = `${bil1} + ${bil2}`;
+                    break;
+                case '-':
+                    if (isNaN(bil1) || isNaN(bil2)) {
+                        showError("Masukkan kedua bilangan!");
+                        return;
+                    }
+                    result = bil1 - bil2;
+                    operationText = `${bil1} - ${bil2}`;
+                    break;
+                case '*':
+                    if (isNaN(bil1) || isNaN(bil2)) {
+                        showError("Masukkan kedua bilangan!");
+                        return;
+                    }
+                    result = bil1 * bil2;
+                    operationText = `${bil1} × ${bil2}`;
+                    break;
+                case '/':
+                    if (isNaN(bil1) || isNaN(bil2)) {
+                        showError("Masukkan kedua bilangan!");
+                        return;
+                    }
+                    if (bil2 === 0) {
+                        showError("Tidak bisa membagi dengan nol!");
+                        return;
+                    }
+                    result = bil1 / bil2;
+                    operationText = `${bil1} ÷ ${bil2}`;
+                    break;
+                case 'pow':
+                    if (isNaN(bil1) || isNaN(bil2)) {
+                        showError("Masukkan kedua bilangan!");
+                        return;
+                    }
+                    result = Math.pow(bil1, bil2);
+                    operationText = `${bil1}^${bil2}`;
+                    break;
+                case 'sqrt':
+                    if (isNaN(bil1)) {
+                        showError("Masukkan bilangan!");
+                        return;
+                    }
+                    if (bil1 < 0) {
+                        showError("Akar dari negatif tidak terdefinisi!");
+                        return;
+                    }
+                    result = Math.sqrt(bil1);
+                    operationText = `√${bil1}`;
+                    break;
+                case '%':
+                    if (isNaN(bil1) || isNaN(bil2)) {
+                        showError("Masukkan kedua bilangan!");
+                        return;
+                    }
+                    result = (bil1 * bil2) / 100;
+                    operationText = `${bil1}% dari ${bil2}`;
+                    break;
+                default:
+                    result = 0;
+            }
+            
+            // Format hasil
+            const formattedResult = result % 1 === 0 ? result : result.toFixed(4);
+            hasilInput.value = formattedResult;
+            
+            // Tambahkan ke riwayat
+            if (operationText) {
+                addToHistory(operationText, formattedResult);
+            }
+        }
+        
+        // Fungsi untuk menangani form submission (Enter key)
+        function handleCalculate(event) {
+            event.preventDefault();
+            calculate(lastOperator);
+        }
+        
+        // Fungsi untuk menambahkan ke riwayat
+        function addToHistory(operation, result) {
+            const historyItem = {
+                operation,
+                result,
+                timestamp: new Date().toLocaleTimeString()
+            };
+            
+            calculationHistory.unshift(historyItem);
+            updateHistoryDisplay();
+            
+            // Animasi item baru
+            const historyList = document.getElementById('historyList');
+            if (historyList.firstChild) {
+                historyList.firstChild.classList.add('fade-in');
+            }
+        }
+        
+        // Fungsi untuk memperbarui tampilan riwayat
+        function updateHistoryDisplay() {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            calculationHistory.slice(0, 5).forEach(item => {
+                const historyElement = document.createElement('div');
+                historyElement.className = 'history-item';
+                historyElement.innerHTML = `
+                    <div>${item.operation} = ${item.result}</div>
+                    <small>${item.timestamp}</small>
+                `;
+                historyList.appendChild(historyElement);
+            });
+        }
+        
+        // Fungsi untuk menghapus riwayat
+        function clearHistory() {
+            calculationHistory = [];
+            updateHistoryDisplay();
+        }
+        
+        // Fungsi untuk menghapus semua (AC)
+        function clearAll() {
+            document.getElementById('bil1').value = '';
+            document.getElementById('bil2').value = '';
+            document.getElementById('hasil').value = '';
+        }
+        
+        // Fungsi untuk menampilkan error
+        function showError(message) {
+            const hasilInput = document.getElementById('hasil');
+            hasilInput.value = message;
+            setTimeout(() => {
+                hasilInput.value = '';
+            }, 2000);
+        }
+        
+        // Dark mode toggle
+        document.getElementById('modeToggle').addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            
+            const toggleButton = document.getElementById('modeToggle');
+            if (document.body.classList.contains('dark-mode')) {
+                toggleButton.innerHTML = '<span>☀️</span> Light Mode';
+            } else {
+                toggleButton.innerHTML = '<span>🌙</span> Dark Mode';
+            }
+        });
+        
+        // Event listener untuk tombol Enter
+        document.addEventListener('DOMContentLoaded', function() {
+            const bil1 = document.getElementById('bil1');
+            const bil2 = document.getElementById('bil2');
+            
+            [bil1, bil2].forEach(input => {
+                input.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        document.getElementById('calcForm').dispatchEvent(new Event('submit'));
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
